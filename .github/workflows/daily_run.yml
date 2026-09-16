@@ -1,0 +1,30 @@
+name: Daily Facebook Tracker
+
+on:
+  schedule:
+    # Runs everyday at 04:00 UTC (09:30 AM IST)
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install curl_cffi
+
+      - name: Run Tracker
+        env:
+          FB_C_USER: ${{ secrets.FB_C_USER }}
+          FB_XS: ${{ secrets.FB_XS }}
+          FB_DATR: ${{ secrets.FB_DATR }}
+          SHEET_WEBHOOK_URL: ${{ secrets.SHEET_WEBHOOK_URL }}
+        run: python tracker.py
